@@ -39,19 +39,21 @@ export function agruparPorHora(users) {
     }, {});
   }
 
-// Calcular média de cadastros por dia
+
 export function calcularMediaCadastrosDia(users) {
-  const porData = {};
+  const diasUnicos = new Set(
+    users
+      .map((user) => dayjs(user.created_at).format('YYYY-MM-DD'))
+      .filter((dia) => dia !== '2025-04-12') // exclui o dia 12/04
+  );
 
-  users.forEach((user) => {
-    const dia = dayjs(user.created_at).format('DD/MM/YYYY');
-    porData[dia] = (porData[dia] || 0) + 1;
-  });
+  const total = users.filter(
+    (user) => dayjs(user.created_at).format('YYYY-MM-DD') !== '2025-04-12'
+  ).length;
 
-  const totalDias = Object.keys(porData).length || 1;
-  const totalCadastros = users.length;
+  const totalDias = diasUnicos.size || 1;
 
-  return (totalCadastros / totalDias).toFixed(1);
+  return (total / totalDias).toFixed(1);
 }
 
 // Contar cadastros com termo não aceito (ex: não concluídos)
